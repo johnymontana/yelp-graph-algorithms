@@ -12,15 +12,16 @@ if not os.path.isfile("data/business_header.csv"):
     with open("dataset/business.json") as business_json, \
             open("data/business.csv", 'w') as business_csv:
 
-        write_header("data/business_header.csv", ['id:ID(Business)', 'name', 'address', 'city', 'state'])
+        write_header("data/business_header.csv", ['id:ID(Business)', 'name', 'address', 'city', 'state', 'location:Point(WGS-84)'])
 
         business_writer = csv.writer(business_csv, escapechar='\\', quotechar='"', quoting=csv.QUOTE_ALL)
 
         for line in business_json.readlines():
             item = json.loads(line)
             try:
-                business_writer.writerow(
-                    [item['business_id'], item['name'], item['address'], item['city'], item['state']])
+                if item['latitude'] and item['longitude']:
+                    business_writer.writerow(
+                        [item['business_id'], item['name'], item['address'], item['city'], item['state'],'{latitude: ' + str(item['latitude']) +', longitude: ' + str(item['longitude']) + '}'])
             except Exception as e:
                 print(item)
                 raise e
@@ -140,7 +141,7 @@ if not os.path.isfile("data/review_header.csv"):
             open("data/user_WROTE_review.csv", 'w') as user_review_csv, \
             open("data/review_REVIEWS_business.csv", 'w') as review_business_csv:
 
-        write_header("data/review_header.csv", ['id:ID(Review)', 'text', 'stars:int', 'date'])
+        write_header("data/review_header.csv", ['id:ID(Review)', 'text', 'stars:int', 'date:Date'])
         write_header("data/user_WROTE_review_header.csv", [':START_ID(User)', ':END_ID(Review)'])
         write_header("data/review_REVIEWS_business_header.csv", [':START_ID(Review)', ':END_ID(Business)'])
 
